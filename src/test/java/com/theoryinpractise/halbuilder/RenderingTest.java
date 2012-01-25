@@ -76,6 +76,8 @@ public class RenderingTest {
         assertThat(party.renderXml()).isEqualTo(exampleXml);
         assertThat(party.renderJson()).isEqualTo(exampleJson);
 
+        System.out.println(party.renderHtmlMicroData());
+
     }
 
 

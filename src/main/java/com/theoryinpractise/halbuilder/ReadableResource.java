@@ -30,6 +30,8 @@ public interface ReadableResource {
 
     String renderXml();
 
+    String renderHtmlMicroData();
+
     <T> boolean isSatisfiedBy(Contract contract);
 
     <T, V> Optional<V> ifSatisfiedBy(Class<T> anInterface, Function<T, V> function);

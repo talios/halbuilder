@@ -13,7 +13,7 @@ import java.lang.reflect.Proxy;
 import static com.theoryinpractise.halbuilder.bytecode.InterfaceSupport.derivePropertyNameFromMethod;
 
 /**
- * Java Interface based "renderer", this will render the resource as a Proxy to a Java interface.
+ * Java Interface based "html", this will render the resource as a Proxy to a Java interface.
  */
 public class InterfaceRenderer<T> implements Renderer<T> {
 

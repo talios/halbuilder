@@ -17,6 +17,7 @@ import com.theoryinpractise.halbuilder.ResourceFactory;
 import com.theoryinpractise.halbuilder.bytecode.InterfaceContract;
 import com.theoryinpractise.halbuilder.bytecode.InterfaceRenderer;
 import com.theoryinpractise.halbuilder.json.JsonRenderer;
+import com.theoryinpractise.halbuilder.html.HtmlMicroDataRenderer;
 import com.theoryinpractise.halbuilder.xml.XmlRenderer;
 
 import java.beans.BeanInfo;
@@ -207,6 +208,10 @@ public class MutableResource implements Resource {
     public String renderXml() {
         return renderJson(new XmlRenderer());
     }
+
+    public String renderHtmlMicroData() {
+            return renderJson(new HtmlMicroDataRenderer());
+        }
 
 
     private String renderJson(final Renderer renderer) {
