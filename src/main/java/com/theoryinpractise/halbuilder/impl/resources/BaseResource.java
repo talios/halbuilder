@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -55,7 +56,7 @@ public abstract class BaseResource implements ReadableResource {
     protected Map<String, String> namespaces = Maps.newTreeMap(usingToString());
     protected List<Link> links = Lists.newArrayList();
     protected Map<String, Object> properties = Maps.newTreeMap(usingToString());
-    protected List<Resource> resources = Lists.newArrayList();
+    protected Map<String, List<Resource>> resources = Maps.newTreeMap(usingToString());
     protected ResourceFactory resourceFactory;
     protected final Pattern resolvableUri = Pattern.compile("^[/|?|~].*");
 
@@ -92,8 +93,10 @@ public abstract class BaseResource implements ReadableResource {
         final ImmutableList.Builder<Link> linkBuilder = ImmutableList.builder();
 
         linkBuilder.addAll(getLinksByRel(this, curiedRel));
-        for (Resource resource : resources) {
-            linkBuilder.addAll(getLinksByRel(resource, curiedRel));
+        for (List<Resource> resourceList : resources.values()) {
+            for (Resource resource : resourceList) {
+                linkBuilder.addAll(getLinksByRel(resource, curiedRel));
+            }
         }
 
         return linkBuilder.build();
@@ -181,16 +184,18 @@ public abstract class BaseResource implements ReadableResource {
         return ImmutableMap.copyOf(properties);
     }
 
-    public List<Resource> getResources() {
-        return ImmutableList.copyOf(resources);
+    public Map<String, List<Resource>> getResources() {
+        return ImmutableMap.copyOf(resources);
     }
 
-    protected  void validateNamespaces(ReadableResource resource) {
+    protected void validateNamespaces(ReadableResource resource) {
         for (Link link : resource.getCanonicalLinks()) {
             validateNamespaces(link.getRel());
         }
-        for (Resource aResource : resource.getResources()) {
-            validateNamespaces(aResource);
+        for (Entry<String, List<Resource>> resourceEntry : resource.getResources().entrySet()) {
+            for (Resource aResource : resourceEntry.getValue()) {
+                validateNamespaces(aResource);
+            }
         }
     }
 

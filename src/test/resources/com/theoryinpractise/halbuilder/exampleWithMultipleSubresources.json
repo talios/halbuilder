@@ -23,7 +23,7 @@
   "_embedded" : {
     "ns:user role:admin" : [ {
       "_links" : {
-        "ns:user role:admin self" : {
+        "self" : {
           "href" : "https://example.com/user/11"
         }
       },
@@ -34,7 +34,7 @@
       "optional" : true
     }, {
       "_links" : {
-        "ns:user role:admin self" : {
+        "self" : {
           "href" : "https://example.com/user/12"
         }
       },

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static com.theoryinpractise.halbuilder.impl.api.Support.HREF;
 import static com.theoryinpractise.halbuilder.impl.api.Support.HREFLANG;
@@ -28,7 +29,7 @@ import static com.theoryinpractise.halbuilder.impl.api.Support.TITLE;
 public class XmlRenderer<T> implements Renderer<T> {
 
     public Optional<T> render(ReadableResource resource, Writer writer) {
-        final Element element = renderElement(resource, false);
+        final Element element = renderElement(resource, null);
         final XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
         try {
             outputter.output(element, writer);
@@ -39,7 +40,7 @@ public class XmlRenderer<T> implements Renderer<T> {
         return Optional.absent();
     }
 
-    private Element renderElement(ReadableResource resource, boolean embedded) {
+    private Element renderElement(ReadableResource resource, String embeddedRel) {
 
         final Link resourceLink = resource.getResourceLink();
         final String href = resourceLink.getHref();
@@ -47,12 +48,12 @@ public class XmlRenderer<T> implements Renderer<T> {
         // Create the root element
         final Element resourceElement = new Element("resource");
         resourceElement.setAttribute("href", href);
-        if (!resourceLink.getRel().equals("self")) {
-            resourceElement.setAttribute("rel", resourceLink.getRel());
+        if (embeddedRel != null) {
+            resourceElement.setAttribute("rel", embeddedRel);
         }
 
         // Only add namespaces to non-embedded resources
-        if (!embedded) {
+        if (embeddedRel == null) {
             for (Map.Entry<String, String> entry : resource.getNamespaces().entrySet()) {
                 resourceElement.addNamespaceDeclaration(
                         Namespace.getNamespace(entry.getKey(), entry.getValue()));
@@ -90,9 +91,11 @@ public class XmlRenderer<T> implements Renderer<T> {
         }
 
         // add subresources
-        for (Resource halResource : resource.getResources()) {
-            Element subResourceElement = renderElement(halResource, true);
-            resourceElement.addContent(subResourceElement);
+        for (Entry<String, List<Resource>> resourceEntry : resource.getResources().entrySet()) {
+            for (Resource subResource : resourceEntry.getValue()) {
+                Element subResourceElement = renderElement(subResource, resourceEntry.getKey());
+                resourceElement.addContent(subResourceElement);
+            }
         }
 
         return resourceElement;

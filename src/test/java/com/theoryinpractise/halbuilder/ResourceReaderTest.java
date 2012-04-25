@@ -57,7 +57,8 @@ public class ResourceReaderTest {
         assertThat(resource.getNamespaces()).hasSize(2);
         assertThat(resource.getCanonicalLinks()).hasSize(3);
         assertThat(resource.getResources()).hasSize(1);
-        assertThat(resource.getResources().iterator().next().getProperties().get("name")).isEqualTo("Example User");
+        assertThat(resource.getResources().values().iterator().next().iterator().next().getProperties().get("name"))
+                .isEqualTo("Example User");
     }
 
     @Test(expectedExceptions = ResourceException.class)
