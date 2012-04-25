@@ -257,7 +257,7 @@ public abstract class BaseResource implements ReadableResource {
     public ImmutableResource toImmutableResource() {
         return new ImmutableResource(resourceFactory, getNamespaces(), getCanonicalLinks(), getProperties(), getResources());
     }
-
+    
     @Override
     public int hashCode() {
         int h = namespaces.hashCode();
@@ -280,12 +280,12 @@ public abstract class BaseResource implements ReadableResource {
         }
         BaseResource that = (BaseResource) obj;
         boolean e = this.namespaces.equals(that.namespaces);
-        e = e && this.links.equals(that.links);
-        e = e && this.properties.equals(that.properties);
-        e = e && this.resources.equals(that.resources);
+        e &= this.links.equals(that.links);
+        e &= this.properties.equals(that.properties);
+        e &= this.resources.equals(that.resources);
         return e;
     }
-
+    
     @Override
     public String toString() {
         Optional<Link> href = getLinkByRel("self");
