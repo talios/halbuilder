@@ -22,6 +22,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URI;
+import java.util.List;
+
+import org.testng.collections.Lists;
 
 import static com.theoryinpractise.halbuilder.impl.api.Support.WHITESPACE_SPLITTER;
 import static java.lang.String.format;
@@ -189,8 +192,12 @@ public class MutableResource extends BaseResource implements Resource {
     }
 
     public MutableResource withSubresource(String rel, Resource resource) {
-        resource.withLink(resource.getResourceLink().getHref(), rel);
-        resources.add(resource);
+        List<Resource> resourceList = resources.get(rel);
+        if (resourceList == null) {
+            resourceList = Lists.newArrayList();
+            resources.put(rel, resourceList);
+        }
+        resourceList.add(resource);
         return this;
     }
 

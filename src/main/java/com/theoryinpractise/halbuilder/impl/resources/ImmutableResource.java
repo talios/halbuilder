@@ -17,7 +17,8 @@ public class ImmutableResource extends BaseResource {
     private final Link resourceLink;
 
     public ImmutableResource(ResourceFactory resourceFactory,
-                             Map<String, String> namespaces, List<Link> links, Map<String, Object> properties, List<Resource> resources) {
+                             Map<String, String> namespaces, List<Link> links, Map<String, Object> properties,
+                             Map<String, List<Resource>> resources) {
         super(resourceFactory);
         this.namespaces = namespaces;
         this.links = links;

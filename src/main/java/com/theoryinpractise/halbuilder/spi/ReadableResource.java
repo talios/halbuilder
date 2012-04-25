@@ -71,7 +71,7 @@ public interface ReadableResource {
      * Returns an ImmutableList of the resources currently embedded resources.
      * @return A Map
      */
-    List<Resource> getResources();
+    Map<String, List<Resource>> getResources();
 
     /**
      * Returns whether this resource is satisfied by the provided Contact.
