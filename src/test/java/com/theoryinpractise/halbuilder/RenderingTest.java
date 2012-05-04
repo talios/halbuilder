@@ -34,8 +34,6 @@ public class RenderingTest {
     private String exampleWithNullPropertyJson;
     private String exampleWithLiteralNullPropertyXml;
     private String exampleWithLiteralNullPropertyJson;
-    private String exampleWithMultipleNestedSubresourcesXml;
-    private String exampleWithMultipleNestedSubresourcesJson;
     private String exampleWithComplexPropertyXml;
     private String exampleWithComplexPropertyJson;
 
@@ -44,33 +42,28 @@ public class RenderingTest {
         exampleXml = Resources.toString(RenderingTest.class.getResource("example.xml"), Charsets.UTF_8)
                               .trim().replaceAll("\n", "\r\n");
         exampleJson = Resources.toString(RenderingTest.class.getResource("example.json"), Charsets.UTF_8)
-                               .trim().replaceAll("\n", "\r\n");
+                               .trim();
         exampleWithSubresourceXml = Resources.toString(RenderingTest.class.getResource("exampleWithSubresource.xml"), Charsets.UTF_8)
                                              .trim().replaceAll("\n", "\r\n");
         exampleWithSubresourceJson = Resources.toString(RenderingTest.class.getResource("exampleWithSubresource.json"), Charsets.UTF_8)
-                                              .trim().replaceAll("\n", "\r\n");
+                                              .trim();
         exampleWithMultipleSubresourcesXml = Resources.toString(RenderingTest.class.getResource("exampleWithMultipleSubresources.xml"), Charsets.UTF_8)
                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithMultipleSubresourcesJson = Resources.toString(RenderingTest.class.getResource("exampleWithMultipleSubresources.json"), Charsets.UTF_8)
-                                                       .trim().replaceAll("\n", "\r\n");
+                                                       .trim();
         exampleWithNullPropertyXml = Resources.toString(RenderingTest.class.getResource("exampleWithNullProperty.xml"), Charsets.UTF_8)
                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithNullPropertyJson = Resources.toString(RenderingTest.class.getResource("exampleWithNullProperty.json"), Charsets.UTF_8)
-                                                       .trim().replaceAll("\n", "\r\n");
+                                                       .trim();
         exampleWithLiteralNullPropertyXml = Resources.toString(RenderingTest.class.getResource("exampleWithLiteralNullProperty.xml"), Charsets.UTF_8)
                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithLiteralNullPropertyJson = Resources.toString(RenderingTest.class.getResource("exampleWithLiteralNullProperty.json"), Charsets.UTF_8)
-                                                       .trim().replaceAll("\n", "\r\n");
-        exampleWithMultipleNestedSubresourcesXml = Resources.toString(RenderingTest.class.getResource("exampleWithMultipleNestedSubresources.xml"), Charsets.UTF_8)
-                                                      .trim().replaceAll("\n", "\r\n");
-        exampleWithMultipleNestedSubresourcesJson = Resources.toString(RenderingTest.class.getResource("exampleWithMultipleNestedSubresources.json"), Charsets.UTF_8)
-                                                      .trim().replaceAll("\n", "\r\n");
+                                                       .trim();
         exampleWithComplexPropertyXml = Resources.toString(RenderingTest.class.getResource("exampleWithComplexProperty.xml"), Charsets.UTF_8)
                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithComplexPropertyJson = Resources.toString(RenderingTest.class.getResource("exampleWithComplexProperty.json"), Charsets.UTF_8)
-                                                      .trim().replaceAll("\n", "\r\n");
+                                                       .trim();
     }
-
 
     private Resource newBaseResource(final Resource resource) {
         return resource.withLink("/api/customer/1234", "ns:parent",
@@ -289,40 +282,6 @@ public class RenderingTest {
         assertThat(party.getResourceLink().getHref()).isEqualTo("https://example.com/api/customer/123456");
         assertThat(party.renderContent(ResourceFactory.HAL_XML)).isEqualTo(exampleWithLiteralNullPropertyXml);
         assertThat(party.renderContent(ResourceFactory.HAL_JSON)).isEqualTo(exampleWithLiteralNullPropertyJson);
-    }
-    
-        @Test
-    public void testHalWithBeanMultipleNestedSubResources() {
-
-        ReadableResource party = newBaseResource("customer/123456")
-                .withNamespace("phone", "https://example.com/apidocs/phones")
-                .withLink("?users", "ns:users")
-                .withBeanBasedSubresource("ns:user role:admin", "/user/11", new Customer(11, "Example User", 32))
-                .withBeanBasedSubresource("ns:user role:admin", "/user/12", new Customer(12, "Example User", 32));
-        
-        party.getResources().get(0).withBeanBasedSubresource("ns:user role:admin phone:cell", "/phone/1", new Phone(1, "555-666-7890"));
-
-        assertThat(party.renderContent(ResourceFactory.HAL_XML)).isEqualTo(exampleWithMultipleNestedSubresourcesXml);
-        assertThat(party.renderContent(ResourceFactory.HAL_JSON)).isEqualTo(exampleWithMultipleNestedSubresourcesJson);
-    }
-    
-    public static class Phone {
-        private final Integer id;
-        
-        private final String number;
-        
-        public Phone(Integer id, String number) {
-            this.id = id;
-            this.number = number;
-        }
-        
-        public Integer getId() {
-            return id;
-        }
-        
-        public String getNumber() {
-            return number;
-        }
     }
 
     public static class OtherCustomer {

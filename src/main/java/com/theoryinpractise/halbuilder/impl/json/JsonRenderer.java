@@ -144,7 +144,6 @@ public class JsonRenderer<T> implements Renderer<T> {
                     g.writeEndArray();
                 }
             }
-            g.writeEndObject();
         }
     }
 
