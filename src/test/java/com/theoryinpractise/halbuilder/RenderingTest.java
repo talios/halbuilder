@@ -36,33 +36,39 @@ public class RenderingTest {
     private String exampleWithLiteralNullPropertyJson;
     private String exampleWithMultipleNestedSubresourcesXml;
     private String exampleWithMultipleNestedSubresourcesJson;
+    private String exampleWithComplexPropertyXml;
+    private String exampleWithComplexPropertyJson;
 
     @BeforeMethod
     public void setup() throws IOException {
         exampleXml = Resources.toString(RenderingTest.class.getResource("example.xml"), Charsets.UTF_8)
                               .trim().replaceAll("\n", "\r\n");
         exampleJson = Resources.toString(RenderingTest.class.getResource("example.json"), Charsets.UTF_8)
-                               .trim();
+                               .trim().replaceAll("\n", "\r\n");
         exampleWithSubresourceXml = Resources.toString(RenderingTest.class.getResource("exampleWithSubresource.xml"), Charsets.UTF_8)
                                              .trim().replaceAll("\n", "\r\n");
         exampleWithSubresourceJson = Resources.toString(RenderingTest.class.getResource("exampleWithSubresource.json"), Charsets.UTF_8)
-                                              .trim();
+                                              .trim().replaceAll("\n", "\r\n");
         exampleWithMultipleSubresourcesXml = Resources.toString(RenderingTest.class.getResource("exampleWithMultipleSubresources.xml"), Charsets.UTF_8)
                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithMultipleSubresourcesJson = Resources.toString(RenderingTest.class.getResource("exampleWithMultipleSubresources.json"), Charsets.UTF_8)
-                                                       .trim();
+                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithNullPropertyXml = Resources.toString(RenderingTest.class.getResource("exampleWithNullProperty.xml"), Charsets.UTF_8)
                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithNullPropertyJson = Resources.toString(RenderingTest.class.getResource("exampleWithNullProperty.json"), Charsets.UTF_8)
-                                                       .trim();
+                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithLiteralNullPropertyXml = Resources.toString(RenderingTest.class.getResource("exampleWithLiteralNullProperty.xml"), Charsets.UTF_8)
                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithLiteralNullPropertyJson = Resources.toString(RenderingTest.class.getResource("exampleWithLiteralNullProperty.json"), Charsets.UTF_8)
-                                                       .trim();
+                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithMultipleNestedSubresourcesXml = Resources.toString(RenderingTest.class.getResource("exampleWithMultipleNestedSubresources.xml"), Charsets.UTF_8)
                                                       .trim().replaceAll("\n", "\r\n");
         exampleWithMultipleNestedSubresourcesJson = Resources.toString(RenderingTest.class.getResource("exampleWithMultipleNestedSubresources.json"), Charsets.UTF_8)
-                                                      .trim();
+                                                      .trim().replaceAll("\n", "\r\n");
+        exampleWithComplexPropertyXml = Resources.toString(RenderingTest.class.getResource("exampleWithComplexProperty.xml"), Charsets.UTF_8)
+                                                      .trim().replaceAll("\n", "\r\n");
+        exampleWithComplexPropertyJson = Resources.toString(RenderingTest.class.getResource("exampleWithComplexProperty.json"), Charsets.UTF_8)
+                                                      .trim().replaceAll("\n", "\r\n");
     }
 
 
@@ -228,6 +234,25 @@ public class RenderingTest {
         assertThat(party.renderContent(ResourceFactory.HAL_JSON)).isEqualTo(exampleWithMultipleSubresourcesJson);
 
     }
+    
+    @Test
+    public void testComplexPropertyHal() {
+
+        URI path = UriBuilder.fromPath("customer/{id}").buildFromMap(ImmutableMap.of("id", "123456"));
+
+        ReadableResource party = newBaseResource(path)
+                                           .withLink("?users", "ns:users")
+                                           .withProperty("id", 123456)
+                                           .withProperty("age", 33)
+                                           .withProperty("name", "Example Resource")
+                                           .withProperty("optional", Boolean.TRUE)
+                                           .withProperty("expired", Boolean.FALSE)
+                                           .withProperty("complexProperty", new ComplexProperty());
+
+        assertThat(party.getResourceLink().getHref()).isEqualTo("https://example.com/api/customer/123456");
+        assertThat(party.renderContent(ResourceFactory.HAL_XML)).isEqualTo(exampleWithComplexPropertyXml);
+        assertThat(party.renderContent(ResourceFactory.HAL_JSON)).isEqualTo(exampleWithComplexPropertyJson);
+    }
 
     @Test
     public void testNullPropertyHal() {
@@ -368,4 +393,39 @@ public class RenderingTest {
         }
     }
 
+    private static class ComplexProperty {
+        private Integer fieldOne;
+        private String fieldTwo;
+        private NestedField fieldThree;
+        
+        public ComplexProperty() {
+            fieldOne = 1;
+            fieldTwo = "hello";
+            fieldThree = new NestedField();
+        }
+        
+        public Integer getFieldOne() {
+            return fieldOne;
+        }
+        
+        public String getFieldTwo() {
+            return fieldTwo;
+        }
+        
+        public NestedField getFieldThree() {
+            return fieldThree;
+        }
+    }
+    
+    private static class NestedField {
+        private String nestedFieldOne;
+        
+        public NestedField() {
+            nestedFieldOne = "hi";
+        }
+        
+        public String getNestedFieldOne() {
+            return nestedFieldOne;
+        }
+    }
 }
