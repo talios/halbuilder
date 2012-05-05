@@ -3,6 +3,7 @@ package com.theoryinpractise.halbuilder.impl.json;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
@@ -44,6 +45,7 @@ public class JsonRenderer<T> implements Renderer<T> {
         try {
             JsonGenerator g = f.createJsonGenerator(writer);
             g.setPrettyPrinter(new DefaultPrettyPrinter());
+            g.setCodec(new ObjectMapper());
             g.writeStartObject();
             renderJson(g, resource, false);
             g.writeEndObject();
@@ -142,7 +144,6 @@ public class JsonRenderer<T> implements Renderer<T> {
                     g.writeEndArray();
                 }
             }
-            g.writeEndObject();
         }
     }
 

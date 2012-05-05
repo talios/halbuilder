@@ -1,5 +1,6 @@
 package com.theoryinpractise.halbuilder.impl.xml;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Optional;
 import com.theoryinpractise.halbuilder.spi.Link;
 import com.theoryinpractise.halbuilder.spi.ReadableResource;
@@ -24,6 +25,10 @@ import static com.theoryinpractise.halbuilder.impl.api.Support.REL;
 import static com.theoryinpractise.halbuilder.impl.api.Support.SELF;
 import static com.theoryinpractise.halbuilder.impl.api.Support.TITLE;
 import static com.theoryinpractise.halbuilder.impl.api.Support.XSI_NAMESPACE;
+import java.io.*;
+import java.util.Arrays;
+import org.jdom.Document;
+import org.jdom.input.SAXBuilder;
 
 
 public class XmlRenderer<T> implements Renderer<T> {
@@ -92,7 +97,32 @@ public class XmlRenderer<T> implements Renderer<T> {
         for (Map.Entry<String, Optional<Object>> entry : resource.getProperties().entrySet()) {
             Element propertyElement = new Element(entry.getKey());
             if(entry.getValue().isPresent()) {
-                propertyElement.setContent(new Text(entry.getValue().get().toString()));
+                // If the property is a primitive, render it directly.
+                Object propValue = entry.getValue().get();
+                if(Number.class.isAssignableFrom(propValue.getClass())
+                || String.class.isAssignableFrom(propValue.getClass())
+                || Boolean.class.isAssignableFrom(propValue.getClass())) {
+                    propertyElement.setContent(new Text(propValue.toString()));
+                }
+                else {
+                    // The property's value is a complex element.
+                    try {
+                        // Yucky stuff.  Is there any nicer way?
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        new XmlMapper().writeValue(baos, propValue);
+                        Document doc = new SAXBuilder().build(new StringReader(baos.toString("UTF-8")));
+                        List docElements = doc.getRootElement().getChildren();
+                        // Need to detach all of the children from the parent.
+                        Object[] docElementArray = docElements.toArray();
+                        for(Object thisElement : docElementArray) {
+                            ((Element)thisElement).detach();
+                        }
+                        propertyElement.addContent(Arrays.asList(docElementArray));
+                    }
+                    catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
             else {
                 propertyElement.setAttribute("nil", "true", XSI_NAMESPACE);

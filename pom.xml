@@ -75,7 +75,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.0.0</jackson.version>
+        <jackson.core.version>2.0.0</jackson.core.version>
     </properties>
 
     <build>
@@ -149,14 +149,19 @@
             <version>1.1</version>
         </dependency>
         <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson.core.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson.core.version}</version>
         </dependency>
     </dependencies>
 </project>
